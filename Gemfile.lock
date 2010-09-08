@@ -1,0 +1,10 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    ruby-serialport (0.7.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  ruby-serialport
