@@ -21,6 +21,7 @@ BLINKM_ADDRESS     = 0x09
 BLINKM_STOP_SCRIPT = 0x6f
 BLINKM_SET_COLOR   = 0x6e
 BLINKM_FADE_COLOR  = 0x63
+BLINKM_PLAY_SCRIPT = 0x70
 
 FAILURE = 0x00
 SUCCESS = 0x01
@@ -75,6 +76,11 @@ def blinkm_stop_script(io)
   i2c_send(io, BLINKM_ADDRESS, BLINKM_STOP_SCRIPT)
 end
 
+def blinkm_play_script(io, n, repeats = 0, offset = 0)
+  puts "Playing BlinkM script ##{n}"
+  i2c_send(io, BLINKM_ADDRESS, BLINKM_PLAY_SCRIPT, n, repeats, offset)
+end
+
 def blinkm_set_color(io, r, g, b, fade = false)
   printf("Setting color #%.2x%.2x%.2x\n", r, g, b)
   command = fade ? BLINKM_FADE_COLOR : BLINKM_SET_COLOR
@@ -88,9 +94,10 @@ SerialPort.open('/dev/tty.usbserial-A7004HZe', 115200) do |s|
   i2c_init(s)
 
   blinkm_stop_script(s)
+  blinkm_play_script(s, 0x0a)
 
-  while true do
-    blinkm_set_color(s, rand(255), rand(255), rand(255), false)
-    sleep 0.5
-  end
+#   while true do
+#     blinkm_set_color(s, rand(255), rand(255), rand(255), false)
+#     sleep 0.25
+#   end
 end
