@@ -21,7 +21,7 @@ describe Bucaneer::BusPirate do
           stub(serial_port).read(4) { "I2C1" }
           stub(Bucaneer::Protocol::I2C).new { i2c_protocol }
 
-          Bucaneer::BusPirate.connect(:i2c, :dev => '/foo/bar') do |i2c|
+          Bucaneer::BusPirate.connect('/foo/bar', :i2c) do |i2c|
             i2c.should == i2c_protocol
           end
         end
@@ -38,7 +38,7 @@ describe Bucaneer::BusPirate do
       context "fail to enter bitbang mode" do
         it "should raise an error" do
           lambda do
-            Bucaneer::BusPirate.connect(:i2c, :dev => '/foo/bar')
+            Bucaneer::BusPirate.connect('/foo/bar', :i2c)
           end.should raise_error("failed to enter bitbang mode")
         end
       end
@@ -48,7 +48,7 @@ describe Bucaneer::BusPirate do
           lambda do
             stub(serial_port).read(5) { "BBIO1" }
             stub(serial_port).read(4) { "XXXX" }
-            Bucaneer::BusPirate.connect(:i2c, :dev => '/foo/bar')
+            Bucaneer::BusPirate.connect('/foo/bar', :i2c)
           end.should raise_error("failed to enter I2C mode")
         end
       end

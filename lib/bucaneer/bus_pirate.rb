@@ -16,11 +16,7 @@ module Bucaneer
 
     attr_reader :serial_port, :protocol
 
-  #   private_class_method :new
-
-    def self.connect(mode, options = {})
-      dev = options[:dev]
-      raise "no device specified" unless dev
+    def self.connect(dev, mode, options = {})
       serial_port = SerialPort.new(dev, BAUD)
 
       begin

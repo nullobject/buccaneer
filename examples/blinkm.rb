@@ -1,6 +1,3 @@
-require 'rubygems'
-require 'bundler/setup'
-
 require 'bucaneer'
 
 PIRATE_DEV = '/dev/tty.usbserial-A7004HZe'
@@ -11,7 +8,7 @@ BLINKM_SET_COLOR   = 0x6e
 BLINKM_FADE_COLOR  = 0x63
 BLINKM_PLAY_SCRIPT = 0x70
 
-Bucaneer::BusPirate.connect(:i2c, :dev => PIRATE_DEV) do |i2c|
+Bucaneer::BusPirate.connect(PIRATE_DEV, :i2c) do |i2c|
   def blinkm_stop_script(i2c)
     puts "Stopping BlinkM script"
     i2c.tx(BLINKM_ADDRESS, BLINKM_STOP_SCRIPT)

@@ -1,5 +1,9 @@
 module Bucaneer::Protocol
-  # The bitbang SPI protocol for the BusPirate.
+  # SPI bitbang on the BusPirate:
+  #   http://dangerousprototypes.com/docs/SPI_(binary)
+  #
+  # SPI protocol:
+  #   http://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus
   class SPI
     SPI_POWER_ON  = 0x48
     SPI_PULLUP_ON = 0x44
