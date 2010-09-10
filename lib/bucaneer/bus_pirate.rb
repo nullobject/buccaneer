@@ -2,7 +2,7 @@ require 'serialport'
 
 module Bucaneer
   class BusPirate
-    BAUD = 115200
+    DEFAULT_BAUD = 115200
 
     TIMEOUT   = 0.01
     MAX_TRIES = 40
@@ -17,7 +17,8 @@ module Bucaneer
     attr_reader :serial_port, :protocol
 
     def self.connect(dev, mode, options = {})
-      serial_port = SerialPort.new(dev, BAUD)
+      baud = options.delete(:baud) || DEFAULT_BAUD
+      serial_port = SerialPort.new(dev, baud)
 
       begin
         bus_pirate = Bucaneer::BusPirate.new(serial_port, mode, options)
@@ -30,7 +31,6 @@ module Bucaneer
     def initialize(serial_port, mode, options)
       @serial_port = serial_port
       set_mode(mode.to_sym, options)
-      sleep 0.1
     end
 
     def tx(byte, expected = SUCCESS)
@@ -57,6 +57,9 @@ module Bucaneer
         else
           raise "unknown mode '#{mode}'"
         end
+
+      # Allow things to settle down.
+      sleep 0.1
     end
 
     def enter_bitbang_mode
