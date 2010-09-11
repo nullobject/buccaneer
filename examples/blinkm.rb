@@ -8,19 +8,19 @@ BLINKM_SET_COLOR   = 0x6e
 BLINKM_FADE_COLOR  = 0x63
 BLINKM_PLAY_SCRIPT = 0x70
 
-Bucaneer::BusPirate.connect(PIRATE_DEV, :i2c) do |i2c|
-  def blinkm_stop_script(i2c)
-    puts "Stopping BlinkM script"
-    i2c.tx(BLINKM_ADDRESS, BLINKM_STOP_SCRIPT)
-  end
-
+Bucaneer::BusPirate.connect(PIRATE_DEV, :i2c, :power => :on, :pullups => :on) do |i2c|
   def blinkm_play_script(i2c, n, repeats = 0, offset = 0)
     puts "Playing BlinkM script ##{n}"
     i2c.tx(BLINKM_ADDRESS, BLINKM_PLAY_SCRIPT, n, repeats, offset)
   end
 
+  def blinkm_stop_script(i2c)
+    puts "Stopping BlinkM script"
+    i2c.tx(BLINKM_ADDRESS, BLINKM_STOP_SCRIPT)
+  end
+
   def blinkm_set_color(i2c, r, g, b, fade = false)
-    printf("Setting color #%.2x%.2x%.2x\n", r, g, b)
+    puts "Setting color #%.2x%.2x%.2x" % [r, g, b]
     command = fade ? BLINKM_FADE_COLOR : BLINKM_SET_COLOR
     i2c.tx(BLINKM_ADDRESS, command, r, g, b)
   end

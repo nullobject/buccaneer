@@ -8,8 +8,12 @@ module Bucaneer
     MAX_TRIES = 40
 
     BITBANG_MODE = 0x00
-    SPI_MODE     = 0x01
-    I2C_MODE     = 0x02
+
+    SET_PERIPHERALS = 0x40
+    POWER_ON        = 0x08
+    PULLUPS_ON      = 0x04
+    AUX_ON          = 0x02
+    CS_ON           = 0x01
 
     FAILURE = 0x00
     SUCCESS = 0x01
@@ -41,27 +45,6 @@ module Bucaneer
       response
     end
 
-  private
-    # Set the BusPirate to the given mode.
-    def set_mode(mode, options)
-      enter_bitbang_mode
-
-      @protocol =
-        case mode
-        when :i2c
-          enter_i2c_mode
-          Bucaneer::Protocol::I2C.new(self, options)
-        when :spi
-          enter_spi_mode
-          Bucaneer::Protocol::SPI.new(self, options)
-        else
-          raise "unknown mode '#{mode}'"
-        end
-
-      # Allow things to settle down.
-      sleep 0.1
-    end
-
     def enter_bitbang_mode
       tries = 0
       begin
@@ -73,18 +56,36 @@ module Bucaneer
       end until response == "BBIO1"
     end
 
-    def enter_i2c_mode
-      @serial_port.puts I2C_MODE.chr
-      sleep TIMEOUT
-      response = @serial_port.read(4)
-      raise "failed to enter I2C mode" unless response == "I2C1"
+    def set_peripherals(options)
+      mask = SET_PERIPHERALS
+
+      mask |= POWER_ON   if options[:power]
+      mask |= PULLUPS_ON if options[:pullups]
+      mask |= AUX_ON     if options[:aux]
+      mask |= CS_ON      if options[:cs]
+
+      tx(mask)
     end
 
-    def enter_spi_mode
-      @serial_port.puts SPI_MODE.chr
-      sleep TIMEOUT
-      response = @serial_port.read(4)
-      raise "failed to enter SPI mode" unless response == "SPI1"
+  private
+    # Set the BusPirate to the given mode.
+    def set_mode(mode, options)
+      enter_bitbang_mode
+
+      @protocol =
+        case mode
+        when :i2c
+          Bucaneer::Protocol::I2C.new(self, options)
+        when :spi
+          Bucaneer::Protocol::SPI.new(self, options)
+        else
+          raise "unknown mode '#{mode}'"
+        end
+
+      set_peripherals(options)
+
+      # Allow things to settle down.
+      sleep 0.1
     end
   end
 end

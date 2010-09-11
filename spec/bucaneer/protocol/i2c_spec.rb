@@ -1,20 +1,25 @@
 require 'spec_helper'
 
-describe BP::I2C do
-  let(:controller) { stub(o = Object.new).tx; o }
+describe Bucaneer::Protocol::I2C do
+  let(:controller) do
+    Object.new.tap do |o|
+      stub(o).tx
+      stub(o).serial_port { StringIO.new("I2C1") }
+    end
+  end
+
+  let(:i2c) { Bucaneer::Protocol::I2C.new(controller) }
 
   describe "#initialize" do
-    it "should enable the power and pullups" do
-      BP::I2C.new(controller)
-      controller.should have_received.tx(0x4c) # power/pullups on
+    before { i2c }
+
+    it "should set the I2C speed" do
+      controller.should have_received.tx(0x62)
     end
   end
 
   describe "#tx" do
-    before do
-      i2c = BP::I2C.new(controller)
-      i2c.tx(0x01, 0xf2, 0xf3)
-    end
+    before { i2c.tx(0x01, 0xf2, 0xf3) }
 
     subject { controller }
 
