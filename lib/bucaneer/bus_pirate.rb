@@ -20,8 +20,14 @@ module Bucaneer
 
     attr_reader :serial_port, :protocol
 
-    def self.connect(dev, mode, options = {})
+    def self.connect(options = {})
+      dev  = options.delete(:dev)
+      mode = options.delete(:mode)
       baud = options.delete(:baud) || DEFAULT_BAUD
+
+      raise "no device specified" unless dev
+      raise "no mode specified"   unless mode
+
       serial_port = SerialPort.new(dev, baud)
 
       begin
