@@ -1,5 +1,7 @@
 # BlinkM demo
-# http://www.sparkfun.com/commerce/product_info.php?products_id=8579
+#
+# Order one from:
+#   http://www.sparkfun.com/commerce/product_info.php?products_id=8579
 
 require 'rubygems'
 require 'bundler/setup'
