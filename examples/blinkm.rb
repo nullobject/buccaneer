@@ -1,6 +1,9 @@
 # BlinkM demo
 # http://www.sparkfun.com/commerce/product_info.php?products_id=8579
 
+require 'rubygems'
+require 'bundler/setup'
+
 require 'bucaneer'
 
 BLINKM_ADDRESS     = 0x09
@@ -34,5 +37,9 @@ Bucaneer::BusPirate.connect(options) do |i2c|
   end
 
   blinkm_stop_script(i2c)
-  blinkm_play_script(i2c, 0x0a)
+
+  while true do
+    blinkm_play_script(i2c, rand(16) + 1)
+    sleep 5
+  end
 end

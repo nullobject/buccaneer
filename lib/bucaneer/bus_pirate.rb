@@ -4,10 +4,11 @@ module Bucaneer
   class BusPirate
     DEFAULT_BAUD = 115200
 
-    TIMEOUT   = 0.01
+    TIMEOUT   = 0.0005
     MAX_TRIES = 40
 
     BITBANG_MODE = 0x00
+    RESET        = 0x0f
 
     SET_PERIPHERALS = 0x40
     POWER_ON        = 0x08
@@ -34,7 +35,16 @@ module Bucaneer
         bus_pirate = Bucaneer::BusPirate.new(serial_port, mode, options)
         yield bus_pirate.protocol if block_given?
       ensure
-        serial_port.close
+        begin
+          if bus_pirate
+            bus_pirate.exit_bitbang_mode
+            bus_pirate.reset
+          end
+
+          serial_port.close
+        rescue
+          # Do nothing.
+        end
       end
     end
 
@@ -60,6 +70,14 @@ module Bucaneer
         response = @serial_port.read(5)
         tries += 1
       end until response == "BBIO1"
+    end
+
+    def exit_bitbang_mode
+      tx(BITBANG_MODE)
+    end
+
+    def reset
+      tx(RESET)
     end
 
     def set_peripherals(options)
@@ -91,7 +109,7 @@ module Bucaneer
       set_peripherals(options)
 
       # Allow things to settle down.
-      sleep 0.1
+      sleep 1
     end
   end
 end

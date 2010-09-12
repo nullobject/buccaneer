@@ -8,6 +8,7 @@ module Bucaneer::Protocol
     SPI_MODE = 0x01
 
     SET_CS     = 0x02
+    SET_SPEED  = 0x61
     BULK_WRITE = 0x10
 
     ENABLE = 0x01
@@ -17,17 +18,24 @@ module Bucaneer::Protocol
     def initialize(controller, options = {})
       @controller = controller
       enter_spi_mode
+      @controller.tx(SET_SPEED)
+      @controller.tx(0x82)
     end
 
-    def tx(*bytes)
-      bytes.flatten!
-
+    def tx(bytes)
       set_cs(false)
+
+      sleep 0.0005
 
       bytes.to_enum.each_slice(CHUNK_SIZE) do |chunk|
         start_bulk_write(chunk.length)
-        chunk.each {|byte| @controller.tx(byte, byte) }
+        chunk.each do |byte|
+          @controller.serial_port.putc byte
+        end
+        @controller.serial_port.read(chunk.length)
       end
+
+      sleep 0.0005
 
       set_cs(true)
     end
