@@ -43,13 +43,7 @@ Bucaneer::BusPirate.connect(options) do |spi|
   # it is the same control byte with tells the LED matrix how many chained
   # devices there are.
   array = 0.upto(256).map do |i|
-    Array.new(MATRIX_SIZE) do
-      n = 0
-      begin
-        n = rand(256)
-      end until n != 0x25
-      n
-    end
+    Array.new(MATRIX_SIZE) { rand(256) }
   end
 
   while $running do
