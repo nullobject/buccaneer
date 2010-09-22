@@ -1,11 +1,9 @@
 require 'rubygems'
-require 'bundler'
-
-Bundler.setup
+require 'bundler/setup'
 
 $: << 'lib'
-require 'bucaneer/alone'
 
+require 'bucaneer/alone'
 require 'rake'
 require 'spec/rake/spectask'
 require 'spec/rake/verify_rcov'
