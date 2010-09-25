@@ -30,27 +30,32 @@ module Bucaneer
       raise "no mode specified"   unless mode
 
       serial_port = SerialPort.new(dev, baud)
+      bus_pirate  = Bucaneer::BusPirate.new(serial_port, mode, options)
 
-      begin
-        bus_pirate = Bucaneer::BusPirate.new(serial_port, mode, options)
-        yield bus_pirate.protocol if block_given?
-      ensure
+      if block_given?
         begin
-          if bus_pirate
-            bus_pirate.exit_bitbang_mode
-            bus_pirate.reset
+          yield bus_pirate.protocol
+        ensure
+          begin
+            bus_pirate.close
+          rescue
+            # Do nothing.
           end
-
-          serial_port.close
-        rescue
-          # Do nothing.
         end
       end
+
+      bus_pirate
     end
 
     def initialize(serial_port, mode, options)
       @serial_port = serial_port
       set_mode(mode.to_sym, options)
+    end
+
+    def close
+      exit_bitbang_mode
+      reset
+      @serial_port.close
     end
 
     def tx(byte, expected = SUCCESS)
