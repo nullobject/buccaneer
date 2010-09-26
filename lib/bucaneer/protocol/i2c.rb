@@ -41,6 +41,7 @@ module Bucaneer::Protocol
     end
 
   private
+
     def start_bulk_write(length)
       @controller.tx(BULK_WRITE | (length - 1))
     end

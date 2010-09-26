@@ -53,7 +53,7 @@ module Bucaneer
     end
 
     def close
-      exit_bitbang_mode
+      enter_bitbang_mode
       reset
       @serial_port.close
     end
@@ -77,10 +77,6 @@ module Bucaneer
       end until response == "BBIO1"
     end
 
-    def exit_bitbang_mode
-      tx(BITBANG_MODE)
-    end
-
     def reset
       tx(RESET)
     end
@@ -97,6 +93,7 @@ module Bucaneer
     end
 
   private
+
     # Set the BusPirate to the given mode.
     def set_mode(mode, options)
       enter_bitbang_mode

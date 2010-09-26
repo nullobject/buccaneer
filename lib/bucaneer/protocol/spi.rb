@@ -41,6 +41,7 @@ module Bucaneer::Protocol
     end
 
   private
+
     def set_cs(enable)
       mask  = SET_CS
       mask |= ENABLE if enable
