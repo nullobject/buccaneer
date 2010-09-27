@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    bucaneer (0.1.0)
+    bucaneer (0.1.1)
       ruby-serialport
 
 GEM
