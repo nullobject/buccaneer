@@ -5,20 +5,20 @@ module Bucaneer::Protocol
   # I2C protocol:
   #   http://en.wikipedia.org/wiki/I²C
   class I2C
-    I2C_MODE = 0x02
+    I2C_MODE      = 0x02
 
-    SET_SPEED  = 0x62
-    START      = 0x02
-    STOP       = 0x03
-    BULK_WRITE = 0x10
+    SET_SPEED     = 0x62
+    START         = 0x02
+    STOP          = 0x03
+    BULK_WRITE    = 0x10
 
     I2C_WRITE_BIT = 0x00
     I2C_READ_BIT  = 0x01
 
-    ACK  = 0x00
-    NACK = 0x01
+    ACK           = 0x00
+    NACK          = 0x01
 
-    CHUNK_SIZE = 16
+    CHUNK_SIZE    = 16
 
     def initialize(controller, options = {})
       @controller = controller

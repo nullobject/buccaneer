@@ -1,14 +1,14 @@
-require 'serialport'
+require "serialport"
 
 module Bucaneer
   class BusPirate
-    DEFAULT_BAUD = 115200
+    DEFAULT_BAUD    = 115200
 
-    TIMEOUT   = 0.0005
-    MAX_TRIES = 40
+    TIMEOUT         = 0.0005
+    MAX_TRIES       = 40
 
-    BITBANG_MODE = 0x00
-    RESET        = 0x0f
+    BITBANG_MODE    = 0x00
+    RESET           = 0x0f
 
     SET_PERIPHERALS = 0x40
     POWER_ON        = 0x08
@@ -16,8 +16,8 @@ module Bucaneer
     AUX_ON          = 0x02
     CS_ON           = 0x01
 
-    FAILURE = 0x00
-    SUCCESS = 0x01
+    FAILURE         = 0x00
+    SUCCESS         = 0x01
 
     attr_reader :serial_port, :protocol
 

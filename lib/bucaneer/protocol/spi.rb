@@ -5,13 +5,13 @@ module Bucaneer::Protocol
   # SPI protocol:
   #   http://en.wikipedia.org/wiki/Serial_Peripheral_Interface_Bus
   class SPI
-    SPI_MODE = 0x01
+    SPI_MODE   = 0x01
 
     SET_CS     = 0x02
     SET_SPEED  = 0x61
     BULK_WRITE = 0x10
 
-    ENABLE = 0x01
+    ENABLE     = 0x01
 
     CHUNK_SIZE = 16
 
