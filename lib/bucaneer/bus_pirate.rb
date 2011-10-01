@@ -1,10 +1,11 @@
+require "io/wait"
 require "serialport"
 
 module Bucaneer
   class BusPirate
     DEFAULT_BAUD    = 115200
 
-    TIMEOUT         = 0.0005
+    TIMEOUT         = 0.01
     MAX_TRIES       = 40
 
     BITBANG_MODE    = 0x00
@@ -53,35 +54,52 @@ module Bucaneer
     end
 
     def close
-      enter_bitbang_mode
-      reset
+      @serial_port.write BITBANG_MODE.chr
+      sleep 0.1
+      @serial_port.write RESET.chr
+      sleep 0.1
       @serial_port.close
     end
 
-    def tx(byte, expected = SUCCESS)
+    def tx(byte)
       @serial_port.putc byte
       sleep TIMEOUT
-      response = @serial_port.getc
-      raise "failed to send data" unless response == expected
-      response
+      @serial_port.readbyte
     end
 
-    def enter_bitbang_mode
-      tries = 0
-      begin
-        raise "failed to enter bitbang mode" if tries >= MAX_TRIES
-        @serial_port.puts BITBANG_MODE.chr
-        sleep TIMEOUT
-        response = @serial_port.read(5)
-        tries += 1
-      end until response == "BBIO1"
+    def flush_read_buffer
+      n = @serial_port.nread
+      @serial_port.read(n)
     end
 
     def reset
-      tx(RESET)
+      puts "resetting..."
+      @serial_port.write "\n\n\n\n\n\n\n\n\n\n#\n"
+      r, w, e = select([@serial_port], nil, nil, 0.1)
+      flush_read_buffer
+      puts "ok"
+    end
+
+    def enter_bitbang_mode
+      puts "entering bitbang mode..."
+      tries = 0
+      while true
+        raise "failed to enter bitbang mode" if tries >= MAX_TRIES
+        @serial_port.write BITBANG_MODE.chr
+        r, w, e = select([@serial_port], nil, nil, TIMEOUT)
+        break if r
+        tries += 1
+      end
+      response = @serial_port.read(5)
+      flush_read_buffer
+      unless response == "BBIO1"
+        raise "failed to enter bitbang mode"
+      end
+      puts "ok"
     end
 
     def set_peripherals(options)
+      puts "setting peripherals..."
       mask = SET_PERIPHERALS
 
       mask |= POWER_ON   if options[:power]
@@ -89,13 +107,18 @@ module Bucaneer
       mask |= AUX_ON     if options[:aux]
       mask |= CS_ON      if options[:cs]
 
-      tx(mask)
+      unless tx(mask) == SUCCESS
+        raise "failed to set peripherals"
+      end
+
+      puts "ok"
     end
 
   private
 
     # Set the BusPirate to the given mode.
     def set_mode(mode, options)
+      reset
       enter_bitbang_mode
 
       @protocol =
@@ -107,8 +130,6 @@ module Bucaneer
         else
           raise "unknown mode '#{mode}'"
         end
-
-      set_peripherals(options)
 
       # Allow things to settle down.
       sleep 1

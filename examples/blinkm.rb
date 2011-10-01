@@ -3,10 +3,10 @@
 # Order one from:
 #   http://www.sparkfun.com/commerce/product_info.php?products_id=8579
 
-require 'rubygems'
-require 'bundler/setup'
+require "rubygems"
+require "bundler/setup"
 
-require 'bucaneer'
+require "bucaneer"
 
 BLINKM_ADDRESS     = 0x09
 BLINKM_STOP_SCRIPT = 0x6f
@@ -15,10 +15,10 @@ BLINKM_FADE_COLOR  = 0x63
 BLINKM_PLAY_SCRIPT = 0x70
 
 options = {
-  :dev     => '/dev/tty.usbserial-A7004HZe',
-  :mode    => :i2c,
-  :power   => :on,
-  :pullups => :on
+  dev:     "/dev/tty.usbserial-A7004HZe",
+  mode:    :i2c,
+  power:   :on,
+  pullups: :on
 }
 
 Bucaneer::BusPirate.connect(options) do |i2c|

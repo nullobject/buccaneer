@@ -23,7 +23,14 @@ module Bucaneer::Protocol
     def initialize(controller, options = {})
       @controller = controller
       enter_i2c_mode
+      @controller.set_peripherals(options)
+      set_speed
+    end
+
+    def set_speed
+      puts "setting i2c speed..."
       @controller.tx(SET_SPEED)
+      puts "ok"
     end
 
     def tx(address, *bytes)
@@ -33,8 +40,16 @@ module Bucaneer::Protocol
 
       bytes.to_enum.each_slice(CHUNK_SIZE) do |chunk|
         start_bulk_write(chunk.length + 1)
-        @controller.tx((address << 1) | I2C_WRITE_BIT, ACK)
-        chunk.each {|byte| @controller.tx(byte, ACK) }
+
+        unless @controller.tx((address << 1) | I2C_WRITE_BIT) == ACK
+          puts "failed to ACK byte"
+        end
+
+        chunk.each do |byte|
+          unless @controller.tx(byte) == ACK
+            puts "failed to ACK byte"
+          end
+        end
       end
 
       @controller.tx(STOP)
@@ -43,14 +58,20 @@ module Bucaneer::Protocol
   private
 
     def start_bulk_write(length)
-      @controller.tx(BULK_WRITE | (length - 1))
+      unless @controller.tx(BULK_WRITE | (length - 1)) == Bucaneer::BusPirate::SUCCESS
+        raise "failed to start bulk write"
+      end
     end
 
     def enter_i2c_mode
-      @controller.serial_port.puts I2C_MODE.chr
-      sleep Bucaneer::BusPirate::TIMEOUT
+      puts "entering i2c mode..."
+      @controller.serial_port.write I2C_MODE.chr
+      sleep 0.1
       response = @controller.serial_port.read(4)
-      raise "failed to enter I2C mode" unless response == "I2C1"
+      unless response == "I2C1"
+        raise "failed to enter I2C mode"
+      end
+      puts "ok"
     end
   end
 end
