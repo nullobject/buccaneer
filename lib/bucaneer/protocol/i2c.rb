@@ -1,8 +1,8 @@
 module Bucaneer::Protocol
-  # I2C bitbang on the BusPirate:
+  # I²C bitbang on the BusPirate:
   #   http://dangerousprototypes.com/docs/I2C_(binary)
   #
-  # I2C protocol:
+  # I²C protocol:
   #   http://en.wikipedia.org/wiki/I²C
   class I2C
     I2C_MODE      = 0x02

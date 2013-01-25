@@ -1,33 +1,26 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Bucaneer::Protocol::I2C do
-  let(:controller) do
-    Object.new.tap do |o|
-      stub(o).tx
-      stub(o).serial_port { StringIO.new("I2C1") }
-    end
-  end
-
-  let(:i2c) { Bucaneer::Protocol::I2C.new(controller) }
+  let(:controller) { double(tx: nil, serial_port: StringIO.new("II2C1"), set_peripherals: nil) }
 
   describe "#initialize" do
-    before { i2c }
-
     it "should set the I2C speed" do
-      controller.should have_received.tx(0x62)
+      controller.should_receive(:tx).with(0x62)
+      Bucaneer::Protocol::I2C.new(controller) { Bucaneer::BusPirate::SUCCESS }
     end
   end
 
   describe "#tx" do
-    before { i2c.tx(0x01, 0xf2, 0xf3) }
+    let(:i2c) { Bucaneer::Protocol::I2C.new(controller) }
 
-    subject { controller }
-
-    it { should have_received.tx(0x02)    } # start
-    it { should have_received.tx(0x12)    } # bulk write
-    it { should have_received.tx(0x02, 0) } # address
-    it { should have_received.tx(0xf2, 0) } # byte
-    it { should have_received.tx(0xf3, 0) } # byte
-    it { should have_received.tx(0x03)    } # stop
+    it "should transmit the given bytes" do
+      controller.should_receive(:tx).ordered.with(0x02) { Bucaneer::BusPirate::SUCCESS } # start
+      controller.should_receive(:tx).ordered.with(0x12) { Bucaneer::BusPirate::SUCCESS } # bulk write
+      controller.should_receive(:tx).ordered.with(0x02) { Bucaneer::Protocol::I2C::ACK } # address
+      controller.should_receive(:tx).ordered.with(0xf2) { Bucaneer::Protocol::I2C::ACK } # byte
+      controller.should_receive(:tx).ordered.with(0xf3) { Bucaneer::Protocol::I2C::ACK } # byte
+      controller.should_receive(:tx).ordered.with(0x03) { Bucaneer::BusPirate::SUCCESS } # stop
+      i2c.tx(0x01, 0xf2, 0xf3)
+    end
   end
 end
