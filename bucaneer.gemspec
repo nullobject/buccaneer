@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.author      = "Josh Bassett"
   s.email       = "josh.bassett@gmail.com"
   s.homepage    = "http://github.com/nullobject/bucaneer"
-  s.summary     = %q{BusPirate library for Ruby.}
+  s.summary     = %q{A BusPirate library for Ruby.}
   s.description = %q{Bucaneer is a Ruby library which allows you to control your BusPirate bitbang modes (I2C, SPI, etc).}
 
   s.rubyforge_project = "bucaneer"
