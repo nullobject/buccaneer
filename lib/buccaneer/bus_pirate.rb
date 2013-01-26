@@ -1,7 +1,7 @@
 require "io/wait"
 require "serialport"
 
-module Bucaneer
+module Buccaneer
   class BusPirate
     DEFAULT_BAUD    = 115200
 
@@ -31,7 +31,7 @@ module Bucaneer
       raise "no mode specified"   unless mode
 
       serial_port = SerialPort.new(dev, baud)
-      bus_pirate  = Bucaneer::BusPirate.new(serial_port, mode, options)
+      bus_pirate  = Buccaneer::BusPirate.new(serial_port, mode, options)
 
       if block_given?
         begin
@@ -124,9 +124,9 @@ module Bucaneer
       @protocol =
         case mode
         when :i2c
-          Bucaneer::Protocol::I2C.new(self, options)
+          Buccaneer::Protocol::I2C.new(self, options)
         when :spi
-          Bucaneer::Protocol::SPI.new(self, options)
+          Buccaneer::Protocol::SPI.new(self, options)
         else
           raise "unknown mode '#{mode}'"
         end

@@ -1,4 +1,4 @@
-module Bucaneer::Protocol
+module Buccaneer::Protocol
   # I²C bitbang on the BusPirate:
   #   http://dangerousprototypes.com/docs/I2C_(binary)
   #
@@ -58,7 +58,7 @@ module Bucaneer::Protocol
   private
 
     def start_bulk_write(length)
-      unless @controller.tx(BULK_WRITE | (length - 1)) == Bucaneer::BusPirate::SUCCESS
+      unless @controller.tx(BULK_WRITE | (length - 1)) == Buccaneer::BusPirate::SUCCESS
         raise "failed to start bulk write"
       end
     end

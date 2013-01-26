@@ -3,7 +3,7 @@ require "simplecov"
 
 SimpleCov.start
 
-require "bucaneer"
+require "buccaneer"
 
 RSpec.configure do |config|
   config.mock_with :rspec

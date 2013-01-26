@@ -1,4 +1,4 @@
-module Bucaneer::Protocol
+module Buccaneer::Protocol
   # SPI bitbang on the BusPirate:
   #   http://dangerousprototypes.com/docs/SPI_(binary)
   #
@@ -54,7 +54,7 @@ module Bucaneer::Protocol
 
     def enter_spi_mode
       @controller.serial_port.puts SPI_MODE.chr
-      sleep Bucaneer::BusPirate::TIMEOUT
+      sleep Buccaneer::BusPirate::TIMEOUT
       response = @controller.serial_port.read(4)
       raise "failed to enter SPI mode" unless response == "SPI1"
     end

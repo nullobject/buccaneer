@@ -6,7 +6,7 @@
 require "rubygems"
 require "bundler/setup"
 
-require "bucaneer"
+require "buccaneer"
 
 BLINKM_ADDRESS     = 0x09
 BLINKM_STOP_SCRIPT = 0x6f
@@ -21,7 +21,7 @@ options = {
   pullups: :on
 }
 
-Bucaneer::BusPirate.connect(options) do |i2c|
+Buccaneer::BusPirate.connect(options) do |i2c|
   def blinkm_play_script(i2c, n, repeats = 0, offset = 0)
     puts "Playing BlinkM script ##{n}"
     i2c.tx(BLINKM_ADDRESS, BLINKM_PLAY_SCRIPT, n, repeats, offset)

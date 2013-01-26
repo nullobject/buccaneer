@@ -6,7 +6,7 @@
 require 'rubygems'
 require 'bundler/setup'
 
-require 'bucaneer'
+require 'buccaneer'
 
 MATRIX_SIZE = 64
 
@@ -27,7 +27,7 @@ def stop
   $running = false
 end
 
-Bucaneer::BusPirate.connect(options) do |spi|
+Buccaneer::BusPirate.connect(options) do |spi|
   # Generate some randomly filled buffers.
   array = 0.upto(256).map do |i|
     Array.new(MATRIX_SIZE) { rand(256) }
